@@ -1,98 +1,104 @@
-// Blogu başlatan ana fonksiyon
-function initializeBlog() {
-    const POSTS_DIR = '_posts/';
-    const postList = document.getElementById('post-list');
+const postList = document.getElementById('post-list');
 
-    // !!! ÖNEMLİ: İlk yazılarınızı CMS'te yayınladıktan sonra
-    // aşağıdaki listeyi, CMS'in _posts klasörüne yazdığı dosya adlarıyla
-    // manuel olarak güncellemeniz gerekir! 
-    const postFiles = [
-        "2025-12-15-ilk-deneme.md", 
-        // "YENI-YAZININ-SLUG'I.md" şeklinde ekleyin
-    ];
+// BURAYI, CSV çıktısı veren URL'NİZ İLE DEĞİŞTİRİN
+const GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSQioLgUM0SjPwo-FSQuxTSBFTvAEXgQbBspNcpnkMW0XlmeaqpMqIGnHOqqjO7WGyENRyT-hJHd7Lf/pub?gid=0&single=true&output=csv'; 
+
+// ----------------------------------------------------
+// CSV'yi JSON'a Çeviren Ana Fonksiyon
+// ----------------------------------------------------
+
+function csvToJson(csv) {
+    const lines = csv.split('\n');
+    const result = [];
     
-    if (postFiles.length === 0) {
-        postList.innerHTML = '<p style="color:#FFFF00;">Henüz hiç yazı yok. Yönetim panelinden bir yazı oluşturun!</p>';
+    // İlk satır (başlıklar) anahtarları belirler
+    const headers = lines[0].split(',').map(header => header.trim().toLowerCase());
+
+    // Başlıklar: title, date, content olmalı
+    if (!headers.includes('title') || !headers.includes('content')) {
+        throw new Error("CSV başlıkları 'title' ve 'content' içermiyor. Google Sheets'i kontrol edin.");
+    }
+    
+    // Kalan satırları işleme
+    for (let i = 1; i < lines.length; i++) {
+        const currentLine = lines[i].split(',');
+        // Boş satırları atla
+        if (currentLine.length !== headers.length) continue; 
+        
+        const obj = {};
+        for (let j = 0; j < headers.length; j++) {
+            // Veriyi objeye aktar
+            obj[headers[j]] = currentLine[j].trim();
+        }
+        result.push(obj);
+    }
+    return result;
+}
+
+// ----------------------------------------------------
+// VERİ ÇEKME VE GÖSTERME
+// ----------------------------------------------------
+
+function fetchAndRenderPosts() {
+    postList.innerHTML = '<p style="color:#00FF00;">CSV verisi çekiliyor ve işleniyor...</p>';
+
+    fetch(GOOGLE_SHEETS_CSV_URL)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Ağ Hatası: ${response.status}`);
+            }
+            return response.text(); // CSV formatı olduğu için metin olarak çekiyoruz
+        })
+        .then(csvText => {
+            // CSV metnini JSON objelerine dönüştür
+            const posts = csvToJson(csvText);
+            renderPosts(posts);
+        })
+        .catch(error => {
+            console.error("Veri Çekme Başarısız:", error);
+            postList.innerHTML = `<p style="color:red; font-weight:bold;">HATA OLUŞTU: Veri çekilemedi!</p>
+                                   <p>Detay: ${error.message}</p>
+                                   <p>Lütfen Google Sheets'in herkese açık olduğundan emin olun.</p>`;
+        });
+}
+
+function renderPosts(posts) {
+    if (posts.length === 0 || posts[0].title === '') {
+        postList.innerHTML = '<p style="color:#FF0000; font-weight: bold;">HENÜZ HİÇ YAZI YOK veya CSV boş.</p>';
         return;
     }
-
-    postList.innerHTML = '<p>Yazılar yükleniyor...</p>';
-
-    // Tüm post dosyalarını çekme sözlerini (Promise) oluştur
-    const fetchPromises = postFiles.map(filename => 
-        fetch(POSTS_DIR + filename)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Dosya bulunamadı: ${filename}`);
-                }
-                return response.text();
-            })
-            .then(markdownContent => parseMarkdownPost(markdownContent, filename))
-            .catch(error => console.error(error))
-    );
-
-    // Tüm postlar yüklendikten sonra listeleme
-    Promise.all(fetchPromises.filter(p => p !== undefined))
-        .then(posts => {
-            // Tarihe göre tersten sırala
-            posts.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            postList.innerHTML = ''; 
-            
-            posts.forEach(post => {
-                const postDiv = document.createElement('div');
-                postDiv.className = 'post-card';
-                postDiv.id = `post-${post.slug}`; 
-
-                const title = document.createElement('h3');
-                title.innerHTML = `<a href="#post-${post.slug}">${post.title}</a>`;
-                
-                const meta = document.createElement('p');
-                meta.className = 'post-meta';
-                meta.textContent = `Yayınlanma: ${post.date.substring(0, 10)} | Kategori: ${post.category || 'Genel'}`;
-                
-                // İçerik (Marked kütüphanesi ile HTML'e çevrildi)
-                const content = document.createElement('div');
-                content.innerHTML = post.body;
-
-                postDiv.appendChild(title);
-                postDiv.appendChild(meta);
-                postDiv.appendChild(content);
-                postList.appendChild(postDiv);
-            });
-        });
-
-    // Markdown dosyasını ayrıştıran fonksiyon (YAML Frontmatter ve Body ayırır)
-    function parseMarkdownPost(markdownContent, filename) {
-        const parts = markdownContent.split('---');
-        if (parts.length < 3) return null;
-
-        // YAML başlığı (Frontmatter) ve İçerik (Body)
-        const frontmatter = parts[1].trim();
-        const body = parts.slice(2).join('---').trim();
-
-        const metadata = {};
-        frontmatter.split('\n').forEach(line => {
-            if (line.includes(':')) {
-                let [key, value] = line.split(/:\s*/);
-                metadata[key.trim()] = value.trim().replace(/^['"]|['"]$/g, '');
-            }
-        });
-
-        // Marked kütüphanesi ile Markdown'ı HTML'e çevirme
-        const htmlBody = marked.parse(body);
-
-        return {
-            ...metadata,
-            body: htmlBody,
-            slug: filename.replace('.md', '')
-        };
+    
+    // Tarihe göre en yeniden en eskiye sırala (Eğer 'date' alanı varsa)
+    if (posts[0].date) {
+        posts.sort((a, b) => new Date(b.date) - new Date(a.date));
     }
+    
+    postList.innerHTML = ''; 
+
+    posts.forEach(post => {
+        const postDiv = document.createElement('div');
+        postDiv.className = 'post-card';
+        
+        const title = document.createElement('h3');
+        title.textContent = post.title; 
+        
+        const meta = document.createElement('p');
+        meta.className = 'post-meta';
+        meta.textContent = post.date ? `Yayınlanma: ${post.date.substring(0, 10)}` : 'Tarih Belirtilmemiş';
+        
+        const content = document.createElement('div');
+        // Yeni satırları <br> ile değiştiriyoruz
+        content.innerHTML = post.content.replace(/\n/g, '<br>');
+
+        postDiv.appendChild(title);
+        postDiv.appendChild(meta);
+        postDiv.appendChild(content);
+        postList.appendChild(postDiv);
+    });
 }
 
-// marked kütüphanesinin yüklenmesini kontrol et (index.html'e eklenmiştir)
-if (typeof marked !== 'undefined') {
-    initializeBlog();
-}
+// Sayfa yüklendiğinde postları çek
+document.addEventListener('DOMContentLoaded', fetchAndRenderPosts);
 
+// Footer yılını güncelleme
 document.getElementById('current-year').textContent = new Date().getFullYear();
