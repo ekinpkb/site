@@ -4,43 +4,23 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kıyak Blogum Yönetim Paneli</title>
+  
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  
+  <script src="https://unpkg.com/netlify-cms@^2.0.0/dist/netlify-cms.js"></script>
 </head>
 <body>
-    <div id="netlify-cms-root"></div>
-    
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/netlify-cms/2.15.72/netlify-cms.js"></script> 
-    
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // NetlifyCMS objesinin varlığını kontrol et
-            if (typeof NetlifyCMS !== 'undefined') {
-                
-                // CMS'i başlatma kodu
-                NetlifyCMS.init({
-                  config: {
-                    config: '/admin/config.yml', 
-                    container: '#netlify-cms-root' 
-                  }
-                });
-                
-                // Identity (Giriş) Kontrolü
-                if (window.netlifyIdentity) {
-                  window.netlifyIdentity.on("init", user => {
-                    if (!user) {
-                      window.netlifyIdentity.on("login", () => {
-                        document.location.href = "/admin/";
-                      });
-                    }
-                  });
-                }
-            } else {
-                console.error("NetlifyCMS kütüphanesi yüklenemedi!");
-                // Hata durumunda kullanıcıya bilgi gösterilebilir
-                document.getElementById('netlify-cms-root').innerHTML = 
-                    '<h2 style="color: red;">Yönetici Paneli yüklenirken hata oluştu. Lütfen tarayıcı önbelleğini temizleyip deneyin.</h2>';
+        // Sadece Identity için gerekli kodu bırakıyoruz, CMS'in otomatik yüklenmesini bekleyeceğiz
+        if (window.netlifyIdentity) {
+          window.netlifyIdentity.on("init", user => {
+            if (!user) {
+              window.netlifyIdentity.on("login", () => {
+                document.location.href = "/admin/";
+              });
             }
-        });
+          });
+        }
     </script>
 </body>
 </html>
