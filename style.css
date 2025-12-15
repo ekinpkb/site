@@ -1,0 +1,134 @@
+/* 2000'ler Temeli: Verdana/Arial, Koyu Arka Plan, Parlak Renkler */
+body {
+    font-family: 'Verdana', 'Arial', sans-serif;
+    background-color: #000080; /* Koyu Mavi Arka Plan */
+    color: #FFFFFF; /* Beyaz Yazı */
+    margin: 0;
+    padding: 20px;
+    font-size: 14px;
+}
+
+/* Ana Konteyner ve Kenarlık Efektleri */
+#container {
+    max-width: 900px;
+    margin: 0 auto;
+    border: 5px solid #FF00FF; /* Parlak Pembe Dış Çerçeve */
+    box-shadow: 0 0 15px #FFFF00; /* Neon Sarı Işıma */
+    background-color: #333333; /* İçerik için Koyu Gri */
+    padding: 10px;
+}
+
+/* Başlık Alanı */
+header {
+    text-align: center;
+    border-bottom: 3px dashed #00FFFF; /* Turkuaz Çizgi */
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+header h1 {
+    font-size: 36px;
+    color: #00FF00; /* Neon Yeşil Başlık */
+    text-shadow: 2px 2px #FF0000; /* Kırmızı Gölgelendirme */
+    margin: 5px 0;
+}
+
+/* Ana Düzen Tablosu (TABLE) */
+#main-layout-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#main-layout-table td {
+    vertical-align: top;
+    padding: 10px;
+    border: 1px solid #AAAAAA; /* Açık Gri Bölücü */
+}
+
+/* Sidebar */
+#sidebar {
+    width: 200px;
+    background-color: #222222;
+    border-right: 3px solid #FF00FF !important; /* Pembe Ayırıcı */
+}
+
+#sidebar nav h3 {
+    color: #FFFF00; /* Sarı Menü Başlığı */
+    border-bottom: 1px dotted #FF00FF;
+    padding-bottom: 5px;
+}
+
+#sidebar nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+#sidebar nav a {
+    color: #00FFFF; /* Açık Mavi Bağlantılar */
+    text-decoration: none;
+    display: block;
+    padding: 5px 0;
+}
+
+#sidebar nav a:hover {
+    background-color: #00FFFF;
+    color: #333333; /* Hover'da ters renk */
+}
+
+.ad-box {
+    margin-top: 20px;
+    padding: 10px;
+    border: 3px double #FF0000;
+    text-align: center;
+    background-color: #440000;
+    font-size: 10px;
+}
+
+/* İçerik Alanı (POSTLAR) */
+#content h2 {
+    color: #FF9900; /* Turuncu Bölüm Başlığı */
+    border-bottom: 2px solid #FF9900;
+    padding-bottom: 5px;
+}
+
+.post-card {
+    background-color: #555555;
+    border: 4px groove #777777; /* Oluklu Çerçeve */
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.post-card h3 a {
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+.post-card h3 a:hover {
+    color: #00FF00;
+}
+
+.post-meta {
+    font-size: 11px;
+    color: #CCCCCC;
+    margin-bottom: 10px;
+    border-bottom: 1px dashed #666666;
+    padding-bottom: 5px;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    font-size: 10px;
+    padding-top: 10px;
+    border-top: 3px solid #FF00FF;
+    color: #AAAAAA;
+    margin-top: 10px;
+}
+/* Yönetim Paneli formları için basit stil (Admin paneli için değil, admin linkleri için) */
+input[type="text"], input[type="password"], textarea {
+    background-color: #555;
+    color: #FFF;
+    border: 1px solid #00FFFF;
+    padding: 5px;
+}

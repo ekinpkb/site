@@ -1,0 +1,19 @@
+backend:
+  name: github
+  repo: ekinpkb/site
+  branch: main
+
+media_folder: "images"
+public_folder: "/images"
+
+collections:
+  - name: "posts"
+    label: "Blog Yazıları"
+    folder: "_posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - {label: "Başlık", name: "title", widget: "string"}
+      - {label: "Yayınlanma Tarihi", name: "date", widget: "datetime"}
+      - {label: "Kategori", name: "category", widget: "string", default: "Genel"}
+      - {label: "İçerik", name: "body", widget: "markdown"}

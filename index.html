@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>::: Kıyak Blogum (2000'ler Sürümü) :::</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+    
+    <div id="container">
+        <header>
+            <h1>🔥 Kıyak Blogum 🔥</h1>
+            <p>Kişisel blogum</p>
+        </header>
+
+        <table id="main-layout-table">
+            <tr>
+                <td id="sidebar">
+                    <nav>
+                        <h3>[ MENÜ ]</h3>
+                        <ul>
+                            <li><a href="index.html">ANA SAYFA</a></li>
+                            <li><a href="#hakkimda">HAKKIMDA</a></li>
+                            <li><a href="mailto:eposta@site.com">İLETİŞİM</a></li>
+                            <li><a href="admin/" style="color: #FF0000; font-weight: bold;">ADMIN PANEL</a></li>
+                        </ul>
+                    </nav>
+                    <div class="ad-box">
+                        <p>** ZİYARETÇİ SAYACI BURAYA GELİR **</p>
+                        <p>1024. Ziyaretçisiniz! Tıklayın!</p>
+                    </div>
+                </td>
+
+                <td id="content">
+                    <h2>📝 SON GÖNDERİLER 📝</h2>
+                    <div id="post-list">
+                        <p>Yükleniyor... Lütfen bekleyin.</p>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <footer>
+            <p>&copy; 2005 - <span id="current-year"></span> | Tüm Hakları Saklıdır.</p>
+        </footer>
+    </div>
+    
+    <script src="script.js"></script>
+    <script>document.getElementById('current-year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
