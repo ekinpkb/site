@@ -1,26 +1,27 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kıyak Blogum Yönetim Paneli</title>
+# config.yml (Admin klasörünün içinde olmalı)
+
+backend:
+  name: github
+  repo: ekinpkb/site
+  branch: main
+
+# Gerekli 1: Media Folder
+media_folder: "images" # Medya dosyalarının (resimler) kaydedileceği klasör
+public_folder: "/images" # Public URL'si
+ 
+# Gerekli 2: Media Library
+media_library: # Bu alan zorunlu, içi boş bile olsa eklenmeli
+  name: upload
   
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-  <script src="https://unpkg.com/netlify-cms@^2.0.0/dist/netlify-cms.js"></script>
-</head>
-<body>
-    <div id="netlify-cms-root"></div> 
-    
-    <script>
-        if (window.netlifyIdentity) {
-          window.netlifyIdentity.on("init", user => {
-            if (!user) {
-              window.netlifyIdentity.on("login", () => {
-                document.location.href = "/admin/";
-              });
-            }
-          });
-        }
-    </script>
-</body>
-</html>
+# Gerekli 3: Collections
+collections:
+  - name: "posts"
+    label: "Blog Yazıları"
+    folder: "_posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - {label: "Başlık", name: "title", widget: "string"}
+      - {label: "Yayınlanma Tarihi", name: "date", widget: "datetime"}
+      - {label: "Kategori", name: "category", widget: "string", default: "Genel"}
+      - {label: "İçerik", name: "body", widget: "markdown"}
